@@ -91,29 +91,14 @@ format = <%= @format %>
 #   'output = kafka':  The rendered 'format.key' will be provided as the
 #                      Kafka message Key
 #   'output = string': Print string to stdout.
-# Supports the same formating and type as 'format' and 'format.type'.
-#
+# Supports the same formatting and type as 'format' and 'format.type'.
 <% if @format_key -%>
 format.key.type = <%= @format_key_type %>
 format.key = <%= @format_key %>
 <% else -%>
 # format.key.type = <%= @format_key_type %>
-# format.key = %h
+# format.key = %l
 <% end -%>
-
-
-
-# EXPERIMENTAL
-# Indicates if the log tag data read from VSL files should be copied instantly
-# when read (true). If this is set to false the data is assumed to be
-# persistent (for the duration of collecting and formatting a single request)
-# and no copies will be made, thus improving performance.
-#
-# NOTE:
-#   Must be set to true for offline files (-r file..) due to the way
-#   libvarnishapi reads its data.
-log.data.copy = <%= @log_data_copy %>
-
 
 # Start for sequence number (%n)
 # Either a number, or the string "time" which will set it to the current
@@ -121,8 +106,56 @@ log.data.copy = <%= @log_data_copy %>
 # Defaults to 0.
 sequence.number = <%= @sequence_number %>
 
-# FUTURE: read last sequence number from file to allow restarts
-#sequence.file = /var/spool/varnishkafka.seq
+
+#
+# TUNING
+#
+
+# The maximum accepted log tag (field) size.
+# Larger tags will be truncated to this size.
+# Defaults to 2048
+tag.size.max = <%= @tag_size_max %>
+
+# Size of per logline scratch buffer.
+# The scratch buffer is used as a temporary storage space while
+# collecting tags for the log line.  If the scratch size is too small the
+# logline tag match will be incomplete.  log.line.scratch.size depicts the
+# size of the "static" always-available memory allocated with each logline.
+# It should be configured to fit all matched tag-values (prior to formatting)
+# for a normal request.  If the scratch buffer gets full vk will start
+# allocating tmpbufs, a tmpbuf only lives for the current request and is then
+# freed, so it is a little more costly than using thestatic scratch pad.
+# Defaults to 4096 bytes.
+log.line.scratch.size = <%= @log_line_scratch_size %>
+
+
+# Logline cache hash tuning
+# 'log.hash.size * log.hash.max' dictates the maximum number of cached logline
+# entries in memory.
+
+# Number of hash buckets (keyed by log id).
+# Higher number yields more performance at the expense of memory.
+# Set this to avg_requests_per_second / 5.
+# Defaults to 5000
+log.hash.size = <%= @log_hash_size %>
+
+# Maximum number of loglines per hash bucket
+# Higher number yields less memory consumption at the expense of performance.
+# Set this to avg_requests_per_second / log.hash.size.
+# Defaults to 5
+log.hash.max = <%= @log_hash_max %>
+
+
+# EXPERIMENTAL
+# log.data.copy indicates if the log tag data read from VSL files should be copied
+# instantly when read (true). If this is set to false the data is assumed to be
+# persistent (for the duration of collecting and formatting a single request)
+# and no copies will be made, thus improving performance.
+#
+# NOTE:
+#   Must be set to true for offline files (-r file..) due to the way
+#   libvarnishapi reads its data.
+log.data.copy = true
 
 
 #
@@ -131,16 +164,34 @@ sequence.number = <%= @sequence_number %>
 #
 
 # varnishkafka log level (1 = emergencies .. 7 = debug)
-log.level = <%= @log_level %>
+log.level = 6
 
 # specify log output (multiples allowed)
-log.stderr = <%= @log_stderr %>
-log.syslog = <%= @log_syslog %>>
 
+log.stderr = false
+log.syslog = true
+
+# Maximum number of error logs produced per log.rate.period seconds
+# This setting is applied per error type.
+# log.rate.max defaults to 100
+# log.rate.period defaults to 60
+#log.rate.max = 100
+#log.rate.period = 60
+
+# Kafka: log message delivery failures (requires required.acks > 0)
+log.kafka.msg.error = true
+
+# Statistics output interval
+# Statistics is collected from varnishkafka itself as well as librdkafka
+# and output as a log message of level LOG_INFO containing a JSON object
+# prefixed with either "STATS: " or "KAFKASTATS: ".
+# Defaults to 60 seconds, use 0 to disable.
+#log.statistics.interval = 60
 
 
 # daemonize varnishkafka (boolean)
-daemonize = true
+daemonize = false
+
 
 
 #######################################################################
@@ -154,7 +205,6 @@ daemonize = true
 #                                                                     #
 #######################################################################
 
-
 <% @varnish_opts.each_pair do |option, value| -%>
 # -<%= option %> <%= value %>
 varnish.arg.<%= option %> = <%= value %>
@@ -167,7 +217,7 @@ varnish.arg.<%= option %> = <%= value %>
 #                                                                     #
 # For the full range of Kafka handle and topic configuration          #
 # properties, see:                                                    #
-#  https://github.com/edenhill/librdkafka/blob/0.8-wip/rdkafka.h      #
+#  https://github.com/edenhill/librdkafka/blob/master/rdkafka.h       #
 #                                                                     #
 # And the Apache Kafka configuration reference:                       #
 #  http://kafka.apache.org/08/configuration.html                      #
@@ -178,10 +228,16 @@ varnish.arg.<%= option %> = <%= value %>
 metadata.broker.list = <%= Array(@brokers).join(',') %>
 
 # Maximum number of messages allowed on the local producer queue
+# Defaults to 1000000
 queue.buffering.max.messages = <%= @queue_buffering_max_messages %>
 
 # Maximum number of retries per messageset.
 message.send.max.retries = <%= @message_send_max_retries %>
+
+
+#
+# Topic configuration
+#
 
 # Topic to produce messages to
 topic = <%= @topic %>
@@ -195,4 +251,7 @@ topic.request.required.acks = <%= @topic_request_required_acks %>
 # Local message timeout (milliseconds)
 topic.message.timeout.ms = <%= topic_message_timeout_ms %>
 
+# Use compression when sending to Kafka..  Default is none.
+# Valid values are 'none', 'gzip', and 'snappy'.
+compression.codec = <%= @compression_codec %>
 <% end -%>

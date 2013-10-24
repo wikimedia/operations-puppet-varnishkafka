@@ -30,10 +30,24 @@
 # $topic_request_required_acks      - Required ack level.  Default: 1
 # $topic_message_timeout_ms         - Local message timeout (milliseconds).
 #                                     Default: 60000
+# $compression_codec                - Compression codec to use when sending batched messages
+#                                     Kafka.  Valid values are 'none', 'gzip', and 'snappy'.
+#                                     Default: none
 # $varnish_opts                     - Arbitrary hash of varnish CLI options.
 #                                     Default: { 'm' => 'RxRequest:^(?!PURGE$)' }
 # $log_data_copy                    - If true, log tag data read from VSL files
 #                                     should be copied instantly when read.  Default true.
+# $tag_size_max                     - Maximum size of an individual field.  Field will be truncated
+#                                     if it is larger than this.  Default: 2048
+# $log_line_scratch_size            - Size of static log line buffer.  If a line is larger than
+#                                     this buffer, temp buffers will be allocated.  Set this
+#                                     slighly larger than your expected line size.
+#                                     Default: 4096
+# $log_hash_size                    - Number of hash buckets.  Set this to avg_requests_per_second / 5.
+#                                     Default: 5000
+# $log_hash_max                     - Max number of log lines / bucket.  Set this to
+#                                     avg_requests_per_second / $log_hash_size.
+#                                     Default: 5
 # $log_level                        - varnishkafka log level.  Default 6 (info).
 # $log_stderr                       - Boolean.  Whether to log to stderr.  Default: true
 # $log_syslog                       - Boolean.  Whether to log to syslog.  Default: true
@@ -58,15 +72,18 @@ class varnishkafka(
     $message_send_max_retries       = $varnishkafka::defaults::message_send_max_retries,
     $topic_request_required_acks    = $varnishkafka::defaults::topic_request_required_acks,
     $topic_message_timeout_ms       = $varnishkafka::defaults::topic_message_timeout_ms,
+    $compression_codec              = $varnishkafka::defaults::compression_codec,
 
     $varnish_opts                   = $varnishkafka::defaults::varnish_opts,
     $log_data_copy                  = $varnishkafka::defaults::log_data_copy,
+    $tag_size_max                   = $varnishkafka::defaults::tag_size_max,
+    $log_line_scratch_size          = $varnishkafka::defaults::log_line_scratch_size,
+    $log_hash_size                  = $varnishkafka::defaults::log_hash_size,
+    $log_hash_max                   = $varnishkafka::defaults::log_hash_max,
 
     $log_level                      = $varnishkafka::defaults::log_level,
     $log_stderr                     = $varnishkafka::defaults::log_stderr,
     $log_syslog                     = $varnishkafka::defaults::log_syslog,
-
-    $daemon_opts                    = $varnishkafka::defaults::daemon_opts,
 
     $conf_template                  = $varnishkafka::defaults::conf_template,
     $default_template               = $varnishkafka::defaults::default_template
