@@ -22,11 +22,12 @@ class varnishkafka::defaults {
     $varnish_opts                   = {
         'm' => 'RxRequest:^(?!PURGE$)',
     }
-    $log_data_copy                  = true
+
     $tag_size_max                   = 2048
-    $log_line_scratch_size          = 4096
-    $log_hash_size                  = 5000
-    $log_hash_max                   = 5
+    $logline_line_scratch_size      = 4096
+    $logline_hash_size              = 5000
+    $logline_hash_max               = 5
+    $logline_data_copy              = true
 
     $log_level                      = 6
     $log_stderr                     = false

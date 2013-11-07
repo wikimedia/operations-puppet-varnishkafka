@@ -126,7 +126,7 @@ tag.size.max = <%= @tag_size_max %>
 # allocating tmpbufs, a tmpbuf only lives for the current request and is then
 # freed, so it is a little more costly than using thestatic scratch pad.
 # Defaults to 4096 bytes.
-log.line.scratch.size = <%= @log_line_scratch_size %>
+logline.scratch.size = <%= @logline_scratch_size %>
 
 
 # Logline cache hash tuning
@@ -137,13 +137,13 @@ log.line.scratch.size = <%= @log_line_scratch_size %>
 # Higher number yields more performance at the expense of memory.
 # Set this to avg_requests_per_second / 5.
 # Defaults to 5000
-log.hash.size = <%= @log_hash_size %>
+logline.hash.size = <%= @logline_hash_size %>
 
 # Maximum number of loglines per hash bucket
 # Higher number yields less memory consumption at the expense of performance.
 # Set this to avg_requests_per_second / log.hash.size.
 # Defaults to 5
-log.hash.max = <%= @log_hash_max %>
+logline.hash.max = <%= @logline_hash_max %>
 
 
 # EXPERIMENTAL
@@ -155,7 +155,7 @@ log.hash.max = <%= @log_hash_max %>
 # NOTE:
 #   Must be set to true for offline files (-r file..) due to the way
 #   libvarnishapi reads its data.
-log.data.copy = true
+logline.data.copy = <%= @logline_data_copy %>
 
 
 #
@@ -215,6 +215,9 @@ varnish.arg.<%= option %> = <%= value %>
 #                                                                     #
 # Kafka configuration                                                 #
 #                                                                     #
+# Kafka configuration properties are prefixed with "kafka."           #
+# and topic properties are prefixed with "kafka.topic.".              #
+#                                                                     #
 # For the full range of Kafka handle and topic configuration          #
 # properties, see:                                                    #
 #  https://github.com/edenhill/librdkafka/blob/master/rdkafka.h       #
@@ -225,14 +228,14 @@ varnish.arg.<%= option %> = <%= value %>
 #######################################################################
 
 # Initial list of kafka brokers
-metadata.broker.list = <%= Array(@brokers).join(',') %>
+kafka.metadata.broker.list = <%= Array(@brokers).join(',') %>
 
 # Maximum number of messages allowed on the local producer queue
 # Defaults to 1000000
-queue.buffering.max.messages = <%= @queue_buffering_max_messages %>
+kafka.queue.buffering.max.messages = <%= @queue_buffering_max_messages %>
 
 # Maximum number of retries per messageset.
-message.send.max.retries = <%= @message_send_max_retries %>
+kafka.message.send.max.retries = <%= @message_send_max_retries %>
 
 
 #
@@ -240,18 +243,18 @@ message.send.max.retries = <%= @message_send_max_retries %>
 #
 
 # Topic to produce messages to
-topic = <%= @topic %>
+kafka.topic = <%= @topic %>
 
 # Partition (-1: random, else one of the available partitions)
-partition = <%= @partition %>
+kafka.partition = <%= @partition %>
 
 # Required number of acks
-topic.request.required.acks = <%= @topic_request_required_acks %>
+kafka.topic.request.required.acks = <%= @topic_request_required_acks %>
 
 # Local message timeout (milliseconds)
-topic.message.timeout.ms = <%= topic_message_timeout_ms %>
+kafka.topic.message.timeout.ms = <%= topic_message_timeout_ms %>
 
 # Use compression when sending to Kafka..  Default is none.
 # Valid values are 'none', 'gzip', and 'snappy'.
-compression.codec = <%= @compression_codec %>
+kafka.compression.codec = <%= @compression_codec %>
 <% end -%>
