@@ -16,7 +16,8 @@ class varnishkafka::defaults {
     $queue_buffering_max_messages   = 1000000
     $message_send_max_retries       = 3
     $topic_request_required_acks    = 1
-    $topic_message_timeout_ms       = 60000
+    $topic_message_timeout_ms       = 300000
+    $topic_request_timeout_ms       = 5000
     $compression_codec              = 'none'
 
     $varnish_opts                   = {

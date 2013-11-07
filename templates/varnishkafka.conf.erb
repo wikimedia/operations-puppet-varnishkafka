@@ -252,7 +252,11 @@ kafka.partition = <%= @partition %>
 kafka.topic.request.required.acks = <%= @topic_request_required_acks %>
 
 # Local message timeout (milliseconds)
-kafka.topic.message.timeout.ms = <%= topic_message_timeout_ms %>
+kafka.topic.message.timeout.ms = <%= @topic_message_timeout_ms %>
+
+# The ack timeout of the producer request in milliseconds
+kafka.topic.message.timeout.ms = <%= @topic_request_timeout_ms %>
+
 
 # Use compression when sending to Kafka..  Default is none.
 # Valid values are 'none', 'gzip', and 'snappy'.

@@ -29,7 +29,9 @@
 #                                     Default: 3
 # $topic_request_required_acks      - Required ack level.  Default: 1
 # $topic_message_timeout_ms         - Local message timeout (milliseconds).
-#                                     Default: 60000
+#                                     Default: 300000
+# $topic_request_timeout_ms         - Ack timeout of the produce request.
+#                                     Default: 5000
 # $compression_codec                - Compression codec to use when sending batched messages to
 #                                     Kafka.  Valid values are 'none', 'gzip', and 'snappy'.
 #                                     Default: none
@@ -72,6 +74,7 @@ class varnishkafka(
     $message_send_max_retries       = $varnishkafka::defaults::message_send_max_retries,
     $topic_request_required_acks    = $varnishkafka::defaults::topic_request_required_acks,
     $topic_message_timeout_ms       = $varnishkafka::defaults::topic_message_timeout_ms,
+    $topic_request_timeout_ms       = $varnishkafka::defaults::topic_request_timeout_ms,
     $compression_codec              = $varnishkafka::defaults::compression_codec,
 
     $varnish_opts                   = $varnishkafka::defaults::varnish_opts,
