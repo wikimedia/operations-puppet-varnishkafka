@@ -24,7 +24,7 @@
 # $partition                        - Topic partition number to send to.  -1 for random.
 #                                     Default: -1.
 # $queue_buffering_max_messages     - Maximum number of messages allowed on the
-#                                     local Kafka producer queue.  Default: 1000000
+#                                     local Kafka producer queue.  Default: 100000
 # $message_send_max_retries         - Maximum number of retries per messageset.
 #                                     Default: 3
 # $topic_request_required_acks      - Required ack level.  Default: 1

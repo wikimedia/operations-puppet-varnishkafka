@@ -13,7 +13,7 @@ class varnishkafka::defaults {
     $format_key                     = undef
 
     $partition                      = -1
-    $queue_buffering_max_messages   = 1000000
+    $queue_buffering_max_messages   = 100000
     $message_send_max_retries       = 3
     $topic_request_required_acks    = 1
     $topic_message_timeout_ms       = 300000
