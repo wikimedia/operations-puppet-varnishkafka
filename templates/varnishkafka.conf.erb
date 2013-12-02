@@ -192,11 +192,11 @@ log.kafka.msg.error = true
 
 # Statistics output interval
 # Defaults to 60 seconds, use 0 to disable.
-#log.statistics.interval = 60
+log.statistics.interval = <%= @log_statistics_interval %>
 
 # Statistics output file
-# Defaults to /var/cache/varnishkafka.stats.json
-#log.statistics.file = /var/cache/varnishkafka.stats.json
+# Defaults to /tmp/varnishkafka.stats.json
+log.statistics.file = <%= @log_statistics_file %>
 
 
 # daemonize varnishkafka (boolean)

@@ -53,6 +53,9 @@
 # $log_level                        - varnishkafka log level.  Default 6 (info).
 # $log_stderr                       - Boolean.  Whether to log to stderr.  Default: true
 # $log_syslog                       - Boolean.  Whether to log to syslog.  Default: true
+# $log_statistics_file              - Path to varnishkafka JSON statistics file.
+#                                     Default: /var/cache/varnishkafka/varnishkafka.stats.json
+# $log_statistics_interval          - JSON statistics file output interval in seconds.  Default: 60
 #
 # $conf_template
 # $default_template
@@ -87,6 +90,8 @@ class varnishkafka(
     $log_level                      = $varnishkafka::defaults::log_level,
     $log_stderr                     = $varnishkafka::defaults::log_stderr,
     $log_syslog                     = $varnishkafka::defaults::log_syslog,
+    $log_statistics_file            = $varnishkafka::defaults::log_statistics_file,
+    $log_statistics_interval        = $varnishkafka::defaults::log_statistics_interval,
 
     $conf_template                  = $varnishkafka::defaults::conf_template,
     $default_template               = $varnishkafka::defaults::default_template

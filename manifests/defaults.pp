@@ -33,6 +33,8 @@ class varnishkafka::defaults {
     $log_level                      = 6
     $log_stderr                     = false
     $log_syslog                     = true
+    $log_statistics_file            = '/var/cache/varnishkafka/varnishkafka.stats.json'
+    $log_statistics_interval        = 60
 
     $conf_template                  = 'varnishkafka/varnishkafka.conf.erb'
     $default_template               = 'varnishkafka/varnishkafka.default.erb'
