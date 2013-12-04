@@ -269,4 +269,7 @@ kafka.topic.message.timeout.ms = <%= @topic_message_timeout_ms %>
 
 # The ack timeout of the producer request in milliseconds
 kafka.topic.request.timeout.ms = <%= @topic_request_timeout_ms %>
+
+# SO_SNDBUFF Socket send buffer size. System default is used if 0.
+kafka.socket.send.buffer.bytes = <%= @socket_send_buffer_bytes %>
 <% end -%>

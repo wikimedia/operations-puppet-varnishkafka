@@ -18,6 +18,7 @@ class varnishkafka::defaults {
     $topic_request_required_acks    = 1
     $topic_message_timeout_ms       = 300000
     $topic_request_timeout_ms       = 5000
+    $socket_send_buffer_bytes       = 0
     $compression_codec              = 'none'
 
     $varnish_opts                   = {
