@@ -26,7 +26,7 @@ class varnishkafka::defaults {
     }
 
     $tag_size_max                   = 2048
-    $logline_line_scratch_size      = 4096
+    $logline_scratch_size           = 4096
     $logline_hash_size              = 5000
     $logline_hash_max               = 5
     $logline_data_copy              = true

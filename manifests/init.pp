@@ -85,7 +85,7 @@ class varnishkafka(
 
     $varnish_opts                   = $varnishkafka::defaults::varnish_opts,
     $tag_size_max                   = $varnishkafka::defaults::tag_size_max,
-    $logline_line_scratch_size      = $varnishkafka::defaults::logline_line_scratch_size,
+    $logline_scratch_size           = $varnishkafka::defaults::logline_scratch_size,
     $logline_hash_size              = $varnishkafka::defaults::logline_hash_size,
     $logline_hash_max               = $varnishkafka::defaults::logline_hash_max,
     $logline_data_copy              = $varnishkafka::defaults::logline_data_copy,
