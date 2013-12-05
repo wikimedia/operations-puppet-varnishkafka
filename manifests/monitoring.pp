@@ -14,7 +14,7 @@ class varnishkafka::monitoring(
     package { 'logster':
         ensure => 'installed',
         # don't bother doing this unless ganglia is installed
-        require => Package['ganglia']
+        require => Package['ganglia-monitor']
     }
     # put the VarnishkafkaLogster.py module in place
     if !defined(File['/usr/local/share/logster']) {
