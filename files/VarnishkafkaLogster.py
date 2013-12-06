@@ -23,7 +23,7 @@ class VarnishkafkaLogster(JsonLogster):
             key = key.replace(self.key_separator, '-')
         elif key.startswith('-'):
             return False
-        elif key in ['name', 'topic', 'toppars']:
+        elif key in ['name', 'topic', 'toppars', 'time', 'fetch_state', 'ts']:
             return False
 
         return key
