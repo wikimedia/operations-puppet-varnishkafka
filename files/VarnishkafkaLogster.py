@@ -15,13 +15,16 @@ class VarnishkafkaLogster(JsonLogster):
     # These keys should be given a slope of
     # 'positive' aka COUNTER.
     counter_metrics = [
-        'txbytes',
-        'txmsgs',
-        'rx',
-        'txerrs',
-        'rxerrs',
-        'kafka_drerr',
         'tx',
+        'txbytes',
+        'txerrs',
+        'txmsgs',
+
+        'rx',
+        'rxbytes'
+        'rxerrs',
+
+        'kafka_drerr',
         'scratch_toosmall',
         'txerr',
         'trunc',
