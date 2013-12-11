@@ -31,7 +31,7 @@ class varnishkafka::monitoring(
     }
 
     # Run logster using the VarnishkafkaLogster parser and send updated stats to Ganglia.
-    $cron_command = "export PYTHONPATH=\$PYTHONPATH:/usr/local/share/logster && /usr/bin/logster --output ganglia --gmetric-options='--group=kafka' VarnishkafkaLogster.VarnishkafkaLogster ${varnishkafka::log_statistics_file}"
+    $cron_command = "export PYTHONPATH=\$PYTHONPATH:/usr/local/share/logster && /usr/bin/logster --output ganglia --gmetric-options='--group=kafka --tmax=60' VarnishkafkaLogster.VarnishkafkaLogster ${varnishkafka::log_statistics_file}"
     cron { 'varnishkafka-stats-to-ganglia':
         ensure  => $ensure,
         command => $cron_command,
