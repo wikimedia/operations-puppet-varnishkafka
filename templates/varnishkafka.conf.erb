@@ -238,7 +238,7 @@ varnish.arg.<%= option %> = <%= value %>
 #######################################################################
 
 # Initial list of kafka brokers
-kafka.metadata.broker.list = <%= Array(@brokers).join(',') %>
+kafka.metadata.broker.list = <%= Array(@brokers).sort.join(',') %>
 
 # Maximum number of messages allowed on the local producer queue
 # Defaults to 1000000

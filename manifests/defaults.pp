@@ -37,6 +37,7 @@ class varnishkafka::defaults {
     $log_statistics_file            = '/var/cache/varnishkafka/varnishkafka.stats.json'
     $log_statistics_interval        = 60
 
+    $should_subscribe               = true
     $conf_template                  = 'varnishkafka/varnishkafka.conf.erb'
     $default_template               = 'varnishkafka/varnishkafka.default.erb'
 }

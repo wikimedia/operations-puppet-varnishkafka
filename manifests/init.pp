@@ -59,6 +59,8 @@
 #                                     Default: /var/cache/varnishkafka/varnishkafka.stats.json
 # $log_statistics_interval          - JSON statistics file output interval in seconds.  Default: 60
 #
+# $should_subscribe                 - If true, the varnishkafka service will restart for config
+#                                     changes.  Default: true.
 # $conf_template
 # $default_template
 #
@@ -96,6 +98,7 @@ class varnishkafka(
     $log_statistics_file            = $varnishkafka::defaults::log_statistics_file,
     $log_statistics_interval        = $varnishkafka::defaults::log_statistics_interval,
 
+    $should_subscribe               = $varnishkafka::defaults::should_subscribe,
     $conf_template                  = $varnishkafka::defaults::conf_template,
     $default_template               = $varnishkafka::defaults::default_template
 ) inherits varnishkafka::defaults
@@ -120,5 +123,18 @@ class varnishkafka(
         hasstatus  => true,
         hasrestart => true,
         subscribe  => [File['/etc/varnishkafka.conf'], File['/etc/default/varnishkafka']],
+    }
+
+    # subscribe varnishkafka to its config files
+    if $should_subscribe {
+        Service['varnishkafka'] {
+            subscribe => [File['/etc/varnishkafka.conf'], File['/etc/default/varnishkafka']],
+        }
+    }
+    # else just require them
+    else {
+        Service['varnishkafka'] {
+            require   => [File['/etc/varnishkafka.conf'], File['/etc/default/varnishkafka']],
+        }
     }
 }
