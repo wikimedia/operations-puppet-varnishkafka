@@ -1,41 +1,34 @@
 # == Class varnishkafka::monitoring
-# Uses logster (https://github.com/wikimedia/operations-debs-logster)
-# to tail varnishkafka.stats.json file send stats to Ganglia.
+# Installs varnishkafka python ganglia module.
 #
-# TODO: Support more than logster ganglia output via
-# class parameters.
 class varnishkafka::monitoring(
     $ensure = 'present'
 )
 {
     Class['varnishkafka'] -> Class['varnishkafka::monitoring']
 
-    # varnishkafka monitoring is done via the logster package.
-    package { 'logster':
-        ensure => 'installed',
-        # don't bother doing this unless ganglia is installed
-        require => Package['ganglia-monitor']
-    }
-    # put the VarnishkafkaLogster.py module in place
-    if !defined(File['/usr/local/share/logster']) {
-        file { '/usr/local/share/logster':
-            ensure => 'directory',
-        }
+    $log_statistics_file     = $::varnishkafka::log_statistics_file
+    $log_statistics_interval = $::varnishkafka::log_statistics_interval
+    file { '/usr/lib/ganglia/python_modules/varnishkafka.py':
+        source  => 'puppet:///modules/varnishkafka/varnishkafka_ganglia.py',
+        require => Package['ganglia-monitor-python'],
+        notify  => Service['gmond'],
     }
 
-    # Custom JsonLogster parser subclass to filter and transform
-    # a few varnishkafka stats JSON keys.
-    file { '/usr/local/share/logster/VarnishkafkaLogster.py':
-        source  => 'puppet:///modules/varnishkafka/VarnishkafkaLogster.py',
-        require => File['/usr/local/share/logster'],
+    # Metrics reported by varnishkafka_ganglia.py are
+    # not known until the varnishkafka.stats.json file is
+    # parsed.  Run it with the --generate-pyconf option to
+    # generate the .pyconf file now.
+    exec { 'generate-varnishkafka.pyconf':
+        require => File['/usr/lib/ganglia/python_modules/varnishkafka.py'],
+        command => "/usr/bin/python /usr/lib/ganglia/python_modules/varnishkafka.py --generate --tmax=${log_statistics_interval} ${log_statistics_file}> /etc/ganglia/conf.d/varnishkafka.pyconf.new",
     }
 
-    # Run logster using the VarnishkafkaLogster parser and send updated stats to Ganglia.
-    $cron_command = "export PYTHONPATH=\$PYTHONPATH:/usr/local/share/logster && /usr/bin/logster --output ganglia --gmetric-options='--group=kafka --tmax=60' VarnishkafkaLogster.VarnishkafkaLogster ${varnishkafka::log_statistics_file}"
-    cron { 'varnishkafka-stats-to-ganglia':
-        ensure  => $ensure,
-        command => $cron_command,
-        minute  => '*/1',
-        require => [Package['logster'], File['/usr/local/share/logster/VarnishkafkaLogster.py']]
+    exec { 'replace-varnishkafka.pyconf':
+        cwd     => '/etc/ganglia/conf.d',
+        path    => '/bin:/usr/bin',
+        unless  => 'diff -q varnishkafka.pyconf.new varnishkafka.pyconf && rm varnishkafka.pyconf.new',
+        command => 'mv varnishkafka.pyconf.new varnishkafka.pyconf',
+        notify  => Service['gmond'],
     }
 }
