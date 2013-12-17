@@ -11,7 +11,7 @@ class varnishkafka::monitoring(
     $log_statistics_interval = $::varnishkafka::log_statistics_interval
     file { '/usr/lib/ganglia/python_modules/varnishkafka.py':
         source  => 'puppet:///modules/varnishkafka/varnishkafka_ganglia.py',
-        require => Package['ganglia-monitor-python'],
+        require => Package['ganglia-monitor'],
         notify  => Service['gmond'],
     }
 
