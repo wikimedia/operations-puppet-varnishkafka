@@ -21,7 +21,7 @@ class varnishkafka::monitoring(
     # generate the .pyconf file now.
     exec { 'generate-varnishkafka.pyconf':
         require => File['/usr/lib/ganglia/python_modules/varnishkafka.py'],
-        command => "/usr/bin/python /usr/lib/ganglia/python_modules/varnishkafka.py --generate --tmax=${log_statistics_interval} ${log_statistics_file}> /etc/ganglia/conf.d/varnishkafka.pyconf.new",
+        command => "/usr/bin/python /usr/lib/ganglia/python_modules/varnishkafka.py --generate --tmax=${log_statistics_interval} ${log_statistics_file} > /etc/ganglia/conf.d/varnishkafka.pyconf.new",
     }
 
     exec { 'replace-varnishkafka.pyconf':
@@ -29,6 +29,7 @@ class varnishkafka::monitoring(
         path    => '/bin:/usr/bin',
         unless  => 'diff -q varnishkafka.pyconf.new varnishkafka.pyconf && rm varnishkafka.pyconf.new',
         command => 'mv varnishkafka.pyconf.new varnishkafka.pyconf',
+        require => Exec['generate-varnishkafka.pyconf'],
         notify  => Service['gmond'],
     }
 }
