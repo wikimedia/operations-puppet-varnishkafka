@@ -536,6 +536,7 @@ def generate_pyconf(module_name, metric_descriptions, params={}, collect_every=1
         params_string += '    param %s { value = %s }\n' % (key, value)
 
     metrics_string = ''
+    metric_descriptions.sort()
     for description in metric_descriptions:
         metrics_string += """
   metric {
