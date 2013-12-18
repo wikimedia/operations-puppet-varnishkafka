@@ -122,7 +122,6 @@ class varnishkafka(
         enable     => true,
         hasstatus  => true,
         hasrestart => true,
-        subscribe  => [File['/etc/varnishkafka.conf'], File['/etc/default/varnishkafka']],
     }
 
     # subscribe varnishkafka to its config files
