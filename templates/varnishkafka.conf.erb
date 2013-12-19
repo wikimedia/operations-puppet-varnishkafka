@@ -220,6 +220,11 @@ daemonize = false
 varnish.arg.<%= option %> = <%= value %>
 <% end -%>
 
+<% if @varnish_name -%>
+# varnish instance name
+varnish.arg.n = <%= @varnish_name %>
+<% end -%>
+
 <% if @output == 'kafka' -%>
 #######################################################################
 #                                                                     #

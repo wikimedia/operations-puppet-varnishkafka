@@ -37,6 +37,7 @@
 # $compression_codec                - Compression codec to use when sending batched messages to
 #                                     Kafka.  Valid values are 'none', 'gzip', and 'snappy'.
 #                                     Default: none
+# $varnish_name                     - Name of varnish instance to log from.  Default: undef
 # $varnish_opts                     - Arbitrary hash of varnish CLI options.
 #                                     Default: { 'm' => 'RxRequest:^(?!PURGE$)' }
 # $tag_size_max                     - Maximum size of an individual field.  Field will be truncated
@@ -86,6 +87,8 @@ class varnishkafka(
     $compression_codec              = $varnishkafka::defaults::compression_codec,
 
     $varnish_opts                   = $varnishkafka::defaults::varnish_opts,
+    $varnish_name                   = $varnishkafka::defaults::varnish_name,
+
     $tag_size_max                   = $varnishkafka::defaults::tag_size_max,
     $logline_scratch_size           = $varnishkafka::defaults::logline_scratch_size,
     $logline_hash_size              = $varnishkafka::defaults::logline_hash_size,

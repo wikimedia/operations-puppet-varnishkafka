@@ -21,6 +21,7 @@ class varnishkafka::defaults {
     $socket_send_buffer_bytes       = 0
     $compression_codec              = 'none'
 
+    $varnish_name                   = undef
     $varnish_opts                   = {
         'm' => 'RxRequest:^(?!PURGE$)',
     }
