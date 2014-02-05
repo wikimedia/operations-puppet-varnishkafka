@@ -22,9 +22,13 @@
 # $format_key                       - Kafka message key format string.
 #                                     Default: undef (disables Kafka message key usage).
 # $partition                        - Topic partition number to send to.  -1 for random.
-#                                     Default: -1.
+#                                     Default: -1
 # $queue_buffering_max_messages     - Maximum number of messages allowed on the
 #                                     local Kafka producer queue.  Default: 100000
+# $queue_buffering_max_ms           - Maximum time, in milliseconds, for buffering
+#                                     data on the producer queue.  Default: 1000
+# $batch_num_messages               - Maximum number of messages batched in one MessageSet.
+#                                     Default: 1000
 # $message_send_max_retries         - Maximum number of retries per messageset.
 #                                     Default: 3
 # $topic_request_required_acks      - Required ack level.  Default: 1
@@ -79,6 +83,9 @@ class varnishkafka(
 
     $partition                      = $varnishkafka::defaults::partition,
     $queue_buffering_max_messages   = $varnishkafka::defaults::queue_buffering_max_messages,
+    $queue_buffering_max_ms         = $varnishkafka::defaults::queue_buffering_max_ms,
+    $batch_num_messages             = $varnishkafka::defaults::batch_num_messages,
+
     $message_send_max_retries       = $varnishkafka::defaults::message_send_max_retries,
     $topic_request_required_acks    = $varnishkafka::defaults::topic_request_required_acks,
     $topic_message_timeout_ms       = $varnishkafka::defaults::topic_message_timeout_ms,

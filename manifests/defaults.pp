@@ -14,6 +14,8 @@ class varnishkafka::defaults {
 
     $partition                      = -1
     $queue_buffering_max_messages   = 100000
+    $queue_buffering_max_ms         = 1000
+    $batch_num_messages             = 1000
     $message_send_max_retries       = 3
     $topic_request_required_acks    = 1
     $topic_message_timeout_ms       = 300000

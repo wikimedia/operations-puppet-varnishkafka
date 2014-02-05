@@ -251,6 +251,14 @@ kafka.metadata.broker.list = <%= Array(@brokers).sort.join(',') %>
 # Defaults to 1000000
 kafka.queue.buffering.max.messages = <%= @queue_buffering_max_messages %>
 
+# Maximum time, in milliseconds, for buffering data on the producer queue.
+# Defaults to 1000 (1 second)
+kafka.queue.buffering.max.ms = <%= @queue_buffering_max_ms %>
+
+# Maximum number of messages batched in one MessageSet.
+# Defaults to 1000
+kafka.batch.num.messages = <%= @batch_num_messages %>
+
 # Maximum number of retries per messageset.
 kafka.message.send.max.retries = <%= @message_send_max_retries %>
 
