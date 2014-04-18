@@ -22,6 +22,7 @@ class varnishkafka::monitoring(
     exec { 'generate-varnishkafka.pyconf':
         require => File['/usr/lib/ganglia/python_modules/varnishkafka.py'],
         command => "/usr/bin/python /usr/lib/ganglia/python_modules/varnishkafka.py --generate --tmax=${log_statistics_interval} ${log_statistics_file} > /etc/ganglia/conf.d/varnishkafka.pyconf.new",
+        onlyif  => "/usr/bin/test -f ${log_statistics_file}",
     }
 
     exec { 'replace-varnishkafka.pyconf':
