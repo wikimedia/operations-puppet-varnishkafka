@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    Gmond module for posting metrics collected by a logster parser.
+    Gmond module for posting metrics from varnishkafka.
 
     :copyright: (c) 2013 Wikimedia Foundation
     :author: Andrew Otto <otto@wikimedia.org>
