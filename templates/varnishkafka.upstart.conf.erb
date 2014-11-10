@@ -1,0 +1,15 @@
+# varnishkafka - Varnish log collector with Apache Kafka integration
+
+description "Varnish log collector"
+
+start on (local-filesystems and net-device-up IFACE!=lo)
+
+setuid varnishlog
+setgid varnishlog
+
+exec /usr/bin/varnishkafka -S "/etc/varnishkafka/<%= @name %>.conf"
+
+respawn
+respawn limit unlimited
+
+# vim: set ft=upstart:
