@@ -573,7 +573,8 @@ collection_group {
         'params_string': params_string,
         'collect_every': collect_every,
         'time_threshold': time_threshold,
-        'metrics_string': metrics_string
+        'metrics_string': metrics_string,
+        'key_prefix': key_prefix
       }
 
 
