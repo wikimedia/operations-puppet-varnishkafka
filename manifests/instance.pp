@@ -129,9 +129,11 @@ define varnishkafka::instance(
     # subscribe varnishkafka to its config files
     if $should_subscribe {
         File["/etc/varnishkafka/${name}.conf"] ~> Service["varnishkafka-${name}"]
+        File["/etc/init/varnishkafka-${name}.conf"] ~> Service["varnishkafka-${name}"]
     }
     # else just require them
     else {
         File["/etc/varnishkafka/${name}.conf"] -> Service["varnishkafka-${name}"]
+        File["/etc/init/varnishkafka-${name}.conf"] -> Service["varnishkafka-${name}"]
     }
 }
