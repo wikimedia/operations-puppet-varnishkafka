@@ -25,14 +25,16 @@ define varnishkafka::monitor(
         require => File['/usr/lib/ganglia/python_modules/varnishkafka.py'],
         command => "/usr/bin/python /usr/lib/ganglia/python_modules/varnishkafka.py --generate --tmax=${log_statistics_interval} ${log_statistics_file} > /etc/ganglia/conf.d/varnishkafka-${name}.pyconf.new",
         onlyif  => "/usr/bin/test -s ${log_statistics_file}",
+        notify  => Exec["replace-varnishkafka-${name}.pyconf"],
     }
 
     exec { "replace-varnishkafka-${name}.pyconf":
-        cwd     => '/etc/ganglia/conf.d',
-        path    => '/bin:/usr/bin',
-        unless  => "diff -q varnishkafka-${name}.pyconf.new varnishkafka-${name}.pyconf && rm varnishkafka-${name}.pyconf.new",
-        command => "mv varnishkafka-${name}.pyconf.new varnishkafka-${name}.pyconf",
-        require => Exec["generate-varnishkafka-${name}.pyconf"],
-        notify  => Service['gmond'],
+        cwd         => '/etc/ganglia/conf.d',
+        path        => '/bin:/usr/bin',
+        unless      => "diff -q varnishkafka-${name}.pyconf.new varnishkafka-${name}.pyconf && rm varnishkafka-${name}.pyconf.new",
+        command     => "mv varnishkafka-${name}.pyconf.new varnishkafka-${name}.pyconf",
+        require     => Exec["generate-varnishkafka-${name}.pyconf"],
+        notify      => Service['gmond'],
+        refreshonly => true,
     }
 }
