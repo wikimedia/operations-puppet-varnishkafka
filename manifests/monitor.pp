@@ -4,6 +4,7 @@
 define varnishkafka::monitor(
     $log_statistics_file     = "/var/cache/varnishkafka/${name}.stats.json",
     $log_statistics_interval = 60,
+    $key_prefix              = $name,
 ) {
     require ::varnishkafka
 
@@ -23,7 +24,7 @@ define varnishkafka::monitor(
     # generate the .pyconf file now.
     exec { "generate-varnishkafka-${name}.pyconf":
         require => File['/usr/lib/ganglia/python_modules/varnishkafka.py'],
-        command => "/usr/bin/python /usr/lib/ganglia/python_modules/varnishkafka.py --generate --tmax=${log_statistics_interval} ${log_statistics_file} > /etc/ganglia/conf.d/varnishkafka-${name}.pyconf.new",
+        command => "/usr/bin/python /usr/lib/ganglia/python_modules/varnishkafka.py --generate --key-prefix='${key_prefix}' --tmax=${log_statistics_interval} ${log_statistics_file} > /etc/ganglia/conf.d/varnishkafka-${name}.pyconf.new",
         onlyif  => "/usr/bin/test -s ${log_statistics_file}",
         notify  => Exec["replace-varnishkafka-${name}.pyconf"],
     }

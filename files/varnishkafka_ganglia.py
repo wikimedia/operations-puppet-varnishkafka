@@ -325,13 +325,16 @@ class VarnishkafkaStats(object):
 varnishkafka_stats = None
 time_max = 15
 last_run_timestamp = 0
+key_prefix = ''
 
 def metric_handler(name):
     """Get value of particular metric; part of Gmond interface"""
     global varnishkafka_stats
     global time_max
     global last_run_timestamp
+    global key_prefix
 
+    name = name[len(key_prefix):]
     seconds_since_last_run = time.time() - last_run_timestamp
     if (seconds_since_last_run >= time_max):
         logger.debug('Updating varnishkafka_stats since it has been {0} seconds, which is more than tmax of {1}'.format(seconds_since_last_run, time_max))
@@ -347,11 +350,15 @@ def metric_init(params):
     global varnishkafka_stats
     global time_max
     global last_run_timestamp
+    global key_prefix
 
     stats_file     = params.get('stats_file', '/var/cache/varnishkafka/varnishkafka.stats.json')
     key_separator  = params.get('key_separator', '.')
     ganglia_groups = params.get('groups', 'kafka')
     time_max       = int(params.get('tmax', time_max))
+    key_prefix     = params.get('key_prefix', '')
+    if key_prefix and not key_prefix.endswith(key_separator):
+        key_prefix += key_separator
 
     varnishkafka_stats = VarnishkafkaStats(stats_file, key_separator)
     # Run update_stats() so that we'll have a list of stats keys that will
@@ -403,7 +410,7 @@ def metric_init(params):
             metric_units = ' '.join([metric_units, 'per second'])
 
         descriptions.append({
-            'name':         key,
+            'name':         key_prefix + key,
             'call_back':    metric_handler,
             'time_max':     time_max,
             'value_type':   metric_type,
@@ -535,12 +542,17 @@ def generate_pyconf(module_name, metric_descriptions, params={}, collect_every=1
             value = str(value)
         params_string += '    param %s { value = %s }\n' % (key, value)
 
+    key_prefix = params.get('key_prefix', '')
+    key_separator = params.get('key_separator', '.')
+    if key_prefix and not key_prefix.endswith(key_separator):
+        key_prefix += key_separator
+
     metrics_string = ''
     metric_descriptions.sort()
     for description in metric_descriptions:
         metrics_string += """
   metric {
-    name  = "%(name)s"
+    name  = "%(key_prefix)s%(name)s"
   }
 """ % description
 
@@ -578,6 +590,8 @@ if __name__ == '__main__':
         help='time_max for ganglia python module metrics.')
     cmdline.add_option('--key-separator', '-k', dest='key_separator', default='.',
         help='Key separator for flattened json object key name. Default: \'.\'  \'/\' is not allowed.')
+    cmdline.add_option('--key-prefix', '-p', dest='key_prefix', default='',
+        help='Optional key prefix for flattened json object key name.')
     cmdline.add_option('--debug', '-D', action='store_true', default=False,
                         help='Provide more verbose logging for debugging.')
 
