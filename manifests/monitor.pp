@@ -26,7 +26,7 @@ define varnishkafka::monitor(
         require => File['/usr/lib/ganglia/python_modules/varnishkafka.py'],
         command => "/usr/bin/python /usr/lib/ganglia/python_modules/varnishkafka.py --generate --key-prefix='${key_prefix}' --tmax=${log_statistics_interval} ${log_statistics_file} > /etc/ganglia/conf.d/varnishkafka-${name}.pyconf.new",
         onlyif  => "/usr/bin/test -s ${log_statistics_file}",
-        notify  => Exec["replace-varnishkafka-${name}.pyconf"],
+        before  => Exec["replace-varnishkafka-${name}.pyconf"],
     }
 
     exec { "replace-varnishkafka-${name}.pyconf":
@@ -36,6 +36,5 @@ define varnishkafka::monitor(
         command     => "mv varnishkafka-${name}.pyconf.new varnishkafka-${name}.pyconf",
         require     => Exec["generate-varnishkafka-${name}.pyconf"],
         notify      => Service['gmond'],
-        refreshonly => true,
     }
 }
