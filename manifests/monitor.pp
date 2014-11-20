@@ -33,7 +33,7 @@ define varnishkafka::monitor(
         cwd         => '/etc/ganglia/conf.d',
         path        => '/bin:/usr/bin',
         unless      => "diff -q varnishkafka-${name}.pyconf.new varnishkafka-${name}.pyconf && rm varnishkafka-${name}.pyconf.new",
-        command     => "mv varnishkafka-${name}.pyconf.new varnishkafka-${name}.pyconf",
+        command     => "mv varnishkafka-${name}.pyconf.new varnishkafka-${name}.pyconf || true",
         require     => Exec["generate-varnishkafka-${name}.pyconf"],
         notify      => Service['gmond'],
     }
