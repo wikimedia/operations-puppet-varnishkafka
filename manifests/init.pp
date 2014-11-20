@@ -28,11 +28,6 @@ class varnishkafka {
         require => Package['varnishkafka'],
     }
 
-    # Install a logrotate file that will work with multiple varnishkafka instances
-    file { '/etc/logrotate.d/varnishkafka':
-        source  => 'puppet:///modules/varnishkafka/varnishkafka_logrotate',
-    }
-
     # Managing the varnishkafka service via its init script requires that the
     # init script be present and that the default file mark the service as
     # enabled. Invoking start-stop-daemon directly allows us to manage the
