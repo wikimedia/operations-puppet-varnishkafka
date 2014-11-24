@@ -119,6 +119,11 @@ define varnishkafka::instance(
         require => Package['varnishkafka'],
     }
 
+    file { "/etc/logrotate.d/varnishkafka-${name}-stats":
+        content => template('varnishkafka/varnishkafka-stats.logrotate.erb'),
+        require => Package['varnishkafka'],
+    }
+
     service { "varnishkafka-${name}":
         ensure     => 'running',
         enable     => true,

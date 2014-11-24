@@ -28,6 +28,15 @@ class varnishkafka {
         require => Package['varnishkafka'],
     }
 
+    # Since we are doing per instance stats.json files, the logrotate
+    # config that comes with the varnishkafka instance is not sufficient.
+    # This file will rotate only the daemon log file at /var/log/varnishkafka.log
+    # varnishkafka::instance will take care of installing a logrotate file for
+    # the per-instance stats.json file.
+    file { '/etc/logrotate.d/varnishkafka':
+        source => 'puppet:///modules/varnishkafka/varnishkafka_logrotate'
+    }
+
     # Managing the varnishkafka service via its init script requires that the
     # init script be present and that the default file mark the service as
     # enabled. Invoking start-stop-daemon directly allows us to manage the

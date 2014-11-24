@@ -1,0 +1,11 @@
+/var/log/varnishkafka.log {
+  daily
+  rotate 7
+  create 0664 syslog adm
+  missingok
+  compress
+  delaycompress
+  postrotate
+    service rsyslog reload >/dev/null
+  endscript
+}
