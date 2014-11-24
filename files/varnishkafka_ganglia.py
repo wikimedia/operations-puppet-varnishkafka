@@ -17,6 +17,7 @@ import optparse
 import os
 import sys
 import time
+import difflib
 
 logger = logging.getLogger('varnishkafka')
 
@@ -354,11 +355,12 @@ def metric_init(params):
 
     stats_file     = params.get('stats_file', '/var/cache/varnishkafka/varnishkafka.stats.json')
     key_separator  = params.get('key_separator', '.')
-    ganglia_groups = params.get('groups', 'kafka')
     time_max       = int(params.get('tmax', time_max))
     key_prefix     = params.get('key_prefix', '')
     if key_prefix and not key_prefix.endswith(key_separator):
         key_prefix += key_separator
+    default_group  = '_'.join(('varnishkafka', key_prefix)).strip(key_separator + '_')
+    ganglia_groups = params.get('groups', default_group)
 
     varnishkafka_stats = VarnishkafkaStats(stats_file, key_separator)
     # Run update_stats() so that we'll have a list of stats keys that will
@@ -584,7 +586,7 @@ if __name__ == '__main__':
     # metric descriptor and printing it out.
 
     cmdline = optparse.OptionParser(usage="usage: %prog [options] statsfile")
-    cmdline.add_option('--generate-pyconf', '-g', action='store_true', default=False,
+    cmdline.add_option('--generate-pyconf', '-g', dest='pyconf', metavar='FILE',
         help='If set, a .pyconf file will be output with flattened metrics key from statsfile.')
     cmdline.add_option('--tmax', '-t', action='store', default=15,
         help='time_max for ganglia python module metrics.')
@@ -592,6 +594,7 @@ if __name__ == '__main__':
         help='Key separator for flattened json object key name. Default: \'.\'  \'/\' is not allowed.')
     cmdline.add_option('--key-prefix', '-p', dest='key_prefix', default='',
         help='Optional key prefix for flattened json object key name.')
+    cmdline.add_option('--dry-run', action='store_true', default=False)
     cmdline.add_option('--debug', '-D', action='store_true', default=False,
                         help='Provide more verbose logging for debugging.')
 
@@ -609,8 +612,14 @@ if __name__ == '__main__':
 
     # If we are to generate the pyconf file from
     # data in stats_file, do so now.
-    if cli_options.generate_pyconf:
-        print(generate_pyconf(
+    if cli_options.pyconf:
+        try:
+            with open(cli_options.pyconf, 'r') as f:
+                cur_pyconf = f.readlines()
+        except:
+            cur_pyconf = []
+
+        new_pyconf = generate_pyconf(
             'varnishkafka',
             metric_init(params),
             # set stats_file and tmax from cli options
@@ -622,7 +631,25 @@ if __name__ == '__main__':
             cli_options.tmax,
             # time_threshold == tmax
             cli_options.tmax,
-        ))
+        ).splitlines(True)
+
+        diff = list(difflib.unified_diff(cur_pyconf, new_pyconf,
+                                         fromfile=cli_options.pyconf,
+                                         tofile=cli_options.pyconf))
+        for line in diff:
+            print line,
+
+        if not diff:
+            print 'Nothing to do: %s is up-to-date.' % cli_options.pyconf
+            sys.exit(1)
+
+        if not cli_options.dry_run:
+            with open(cli_options.pyconf, 'w') as f:
+                f.writelines(new_pyconf)
+
+        print '\nWrote "%s".' % cli_options.pyconf
+        sys.exit(0)
+
 
     # Else print out values of metrics in a loop.
     else:
