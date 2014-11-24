@@ -22,7 +22,7 @@ define varnishkafka::monitor(
         }
     }
 
-    exec { "generate_varnishkafka_gmond_pyconf":
+    exec { "generate_varnishkafka_${name}_gmond_pyconf":
         command => $generate_pyconf_command,
         onlyif  => "${generate_pyconf_command} --dry-run",
         require => File[$varnishkafka_py],
