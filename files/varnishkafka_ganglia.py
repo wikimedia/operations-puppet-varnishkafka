@@ -643,6 +643,10 @@ if __name__ == '__main__':
             print 'Nothing to do: %s is up-to-date.' % cli_options.pyconf
             sys.exit(1)
 
+        if not len(''.join(new_pyconf).strip()):
+            print 'Nothing to do.'
+            sys.exit(1)
+
         if not cli_options.dry_run:
             with open(cli_options.pyconf, 'w') as f:
                 f.writelines(new_pyconf)
