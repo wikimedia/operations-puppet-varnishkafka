@@ -18,7 +18,7 @@ define varnishkafka::monitor(
         file { $varnishkafka_py:
             source  => 'puppet:///modules/varnishkafka/varnishkafka_ganglia.py',
             require => Package['ganglia-monitor'],
-            notify  => Service['gmond'],
+            notify  => Service['ganglia-monitor'],
         }
     }
 
@@ -26,6 +26,6 @@ define varnishkafka::monitor(
         command => $generate_pyconf_command,
         onlyif  => "${generate_pyconf_command} --dry-run",
         require => File[$varnishkafka_py],
-        notify  => Service['gmond'],
+        notify  => Service['ganglia-monitor'],
     }
 }
