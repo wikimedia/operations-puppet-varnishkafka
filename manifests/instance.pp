@@ -140,6 +140,7 @@ define varnishkafka::instance(
     }
 
     service { "varnishkafka-${name}":
+        provider   => $::initsystem,
         ensure     => 'running',
         enable     => true,
         hasstatus  => true,
