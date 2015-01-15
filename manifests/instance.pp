@@ -121,14 +121,14 @@ define varnishkafka::instance(
 
     case $::initsystem {
         'systemd': {
-            $init_file = "/etc/systemd/system/varnishkafka-${name}.service";
+            $init_file = "/etc/systemd/system/varnishkafka-${name}.service"
             file { $init_file:
                 content => template('varnishkafka/varnishkafka.service.erb'),
                 require => Package['varnishkafka'],
             }
         }
         'upstart': {
-            $init_file = "/etc/init/varnishkafka-${name}.conf";
+            $init_file = "/etc/init/varnishkafka-${name}.conf"
             file { $init_file:
                 content => template('varnishkafka/varnishkafka.upstart.conf.erb'),
                 require => Package['varnishkafka'],
