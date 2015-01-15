@@ -114,14 +114,29 @@ define varnishkafka::instance(
         require => Package['varnishkafka'],
     }
 
-    file { "/etc/init/varnishkafka-${name}.conf":
-        content => template('varnishkafka/varnishkafka.upstart.conf.erb'),
-        require => Package['varnishkafka'],
-    }
-
     file { "/etc/logrotate.d/varnishkafka-${name}-stats":
         content => template('varnishkafka/varnishkafka-stats.logrotate.erb'),
         require => Package['varnishkafka'],
+    }
+
+    case $::initsystem {
+        'systemd': {
+            $init_file = "/etc/systemd/system/varnishkafka-${name}.service";
+            file { $init_file:
+                content => template('varnishkafka/varnishkafka.service.erb'),
+                require => Package['varnishkafka'],
+            }
+        }
+        'upstart': {
+            $init_file = "/etc/init/varnishkafka-${name}.conf";
+            file { $init_file:
+                content => template('varnishkafka/varnishkafka.upstart.conf.erb'),
+                require => Package['varnishkafka'],
+            }
+        }
+        default: {
+            fail('varnishkafka::instance does not like your init system!')
+        }
     }
 
     service { "varnishkafka-${name}":
@@ -134,11 +149,11 @@ define varnishkafka::instance(
     # subscribe varnishkafka to its config files
     if $should_subscribe {
         File["/etc/varnishkafka/${name}.conf"] ~> Service["varnishkafka-${name}"]
-        File["/etc/init/varnishkafka-${name}.conf"] ~> Service["varnishkafka-${name}"]
+        File[$init_file] ~> Service["varnishkafka-${name}"]
     }
     # else just require them
     else {
         File["/etc/varnishkafka/${name}.conf"] -> Service["varnishkafka-${name}"]
-        File["/etc/init/varnishkafka-${name}.conf"] -> Service["varnishkafka-${name}"]
+        File[$init_file] -> Service["varnishkafka-${name}"]
     }
 }
