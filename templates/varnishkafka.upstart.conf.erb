@@ -10,6 +10,7 @@ setgid varnishlog
 exec /usr/bin/varnishkafka -S "/etc/varnishkafka/<%= @name %>.conf"
 
 respawn
-respawn limit unlimited
+# Seems broken on precise:
+# respawn limit unlimited
 
 # vim: set ft=upstart:
