@@ -41,7 +41,11 @@
 # $compression_codec                - Compression codec to use when sending batched messages to
 #                                     Kafka.  Valid values are 'none', 'gzip', and 'snappy'.
 #                                     Default: none
-# $varnish_name                     - Name of varnish instance to log from.  Default: undef
+# $varnish_name                     - Name of varnish instance to log from in varnish terms (e.g.
+#                                     the -n argument to various CLI commands).  Default: undef,
+#                                     typically "frontend", or "$::hostname".
+# $varnish_svc_name                 - Name of varnish *service* to log from, as named by the init system.
+#                                     Default: undef, typically "varnish-frontend" or "varnish"
 # $varnish_opts                     - Arbitrary hash of varnish CLI options.
 #                                     Default: { 'm' => 'RxRequest:^(?!PURGE$)' }
 # $tag_size_max                     - Maximum size of an individual field.  Field will be truncated
@@ -90,6 +94,7 @@ define varnishkafka::instance(
     $compression_codec              = 'none',
 
     $varnish_name                   = undef,
+    $varnish_svc_name               = undef,
     $varnish_opts                   = { 'm' => 'RxRequest:^(?!PURGE$)', },
 
     $tag_size_max                   = 2048,
@@ -134,8 +139,10 @@ define varnishkafka::instance(
 
     if $should_subscribe {
         File["/etc/varnishkafka/${name}.conf"] ~> Service["varnishkafka-${name}"]
+        Service[$varnish_svc_name] ~> Service["varnishkafka-${name}"]
     }
     else {
         File["/etc/varnishkafka/${name}.conf"] -> Service["varnishkafka-${name}"]
+        Service[$varnish_svc_name] -> Service["varnishkafka-${name}"]
     }
 }
