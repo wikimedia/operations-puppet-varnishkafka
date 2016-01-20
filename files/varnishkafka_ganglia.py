@@ -22,7 +22,6 @@ import difflib
 logger = logging.getLogger('varnishkafka')
 
 
-
 # metric keys to skip reporting to ganglia
 skip_metrics = [
     'app_offset',
@@ -95,7 +94,6 @@ def flatten_object(node, separator='.', key_filter_callback=None, parent_keys=No
     return flattened
 
 
-
 def tail(filename, n=2):
     '''
     Tails the last n lines from filename and returns them in a list.
@@ -164,7 +162,7 @@ class VarnishkafkaStats(object):
         self.stats_file               = stats_file
         self.key_separator            = key_separator
 
-        # NOTE:  It might be more elegant to 
+        # NOTE:  It might be more elegant to
         # store the JSON object as it comes back from stats_file,
         # rather than keeping the state in the flattened hash.
 
@@ -187,7 +185,6 @@ class VarnishkafkaStats(object):
             key_separator.join(['kafka', 'varnishkafka', 'time']),
             key_separator.join(['kafka', 'rdkafka', 'time']),
         ]
-
 
     def key_filter(self, key):
         '''
@@ -213,7 +210,6 @@ class VarnishkafkaStats(object):
             return False
 
         return key
-
 
     def is_counter_stat(self, key):
         '''
@@ -328,6 +324,7 @@ time_max = 15
 last_run_timestamp = 0
 key_prefix = ''
 
+
 def metric_handler(name):
     """Get value of particular metric; part of Gmond interface"""
     global varnishkafka_stats
@@ -338,7 +335,9 @@ def metric_handler(name):
     name = name[len(key_prefix):]
     seconds_since_last_run = time.time() - last_run_timestamp
     if (seconds_since_last_run >= time_max):
-        logger.debug('Updating varnishkafka_stats since it has been {0} seconds, which is more than tmax of {1}'.format(seconds_since_last_run, time_max))
+        logger.debug(
+            'Updating varnishkafka_stats since it has been {0} seconds, which '
+            'is more than tmax of {1}'.format(seconds_since_last_run, time_max))
         varnishkafka_stats.update_stats()
         last_run_timestamp = time.time()
 
@@ -425,19 +424,17 @@ def metric_init(params):
 
     return descriptions
 
+
 def metric_cleanup():
     """Teardown; part of Gmond interface"""
     pass
 
 
-
-
-
-
-
 # To run tests:
 #   python -m unittest varnishkafka_ganglia
-import unittest
+import unittest  # noqa
+
+
 class TestVarnishkafkaGanglia(unittest.TestCase):
     def setUp(self):
         self.key_separator = '&'
@@ -452,17 +449,17 @@ class TestVarnishkafkaGanglia(unittest.TestCase):
                     'value4': False,
                 }
             },
-            '2.1': ['a','b'],
-            '2.1': ['a','b'],
+            '2.1': ['a', 'b'],
+            '2.1': ['a', 'b'],
             # '/' should be replaced with key_separator
             '3/1': 'nonya',
             'notme': 'nope',
             'kafka': {
                 'varnishkafka': {
                     'time': time.time(),
-                    'counter': { self.varnishkafka_stats.counter_stats[0]: 0 },
+                    'counter': {self.varnishkafka_stats.counter_stats[0]: 0},
                 },
-                'rdkafka': { 'time': time.time() }
+                'rdkafka': {'time': time.time()}
             },
         }
         self.flattened_should_be = {
@@ -478,7 +475,6 @@ class TestVarnishkafkaGanglia(unittest.TestCase):
             'kafka&varnishkafka&counter&{0}'.format(self.varnishkafka_stats.counter_stats[0]): 0,
             'kafka&rdkafka&time': self.json_data['kafka']['rdkafka']['time'],
         }
-
 
     def key_filter_callback(self, key):
         if key == 'value2':
@@ -517,15 +513,22 @@ class TestVarnishkafkaGanglia(unittest.TestCase):
         self.flattened_should_be['kafka&varnishkafka&time'] += 100.0
         self.varnishkafka_stats.update_stats(self.flattened_should_be)
 
-        self.assertEquals(self.varnishkafka_stats.flattened_stats_previous[counter_key], previous_value)
-        self.assertEquals(self.varnishkafka_stats.flattened_stats[counter_key], self.flattened_should_be[counter_key])
-        self.assertEquals(self.varnishkafka_stats.flattened_stats['kafka&varnishkafka&time'], self.flattened_should_be['kafka&varnishkafka&time'])
+        self.assertEquals(
+            self.varnishkafka_stats.flattened_stats_previous[counter_key],
+            previous_value
+        )
+        self.assertEquals(
+            self.varnishkafka_stats.flattened_stats[counter_key],
+            self.flattened_should_be[counter_key]
+        )
+        self.assertEquals(
+            self.varnishkafka_stats.flattened_stats['kafka&varnishkafka&time'],
+            self.flattened_should_be['kafka&varnishkafka&time']
+        )
         per_second_key = self.key_separator.join([counter_key, self.varnishkafka_stats.per_second_key_suffix])
 
         rate_should_be = (self.flattened_should_be[counter_key] - self.varnishkafka_stats.flattened_stats_previous[counter_key]) / 100.0
         self.assertEquals(self.varnishkafka_stats.flattened_stats[per_second_key], rate_should_be)
-
-
 
 
 def generate_pyconf(module_name, metric_descriptions, params={}, collect_every=15, time_threshold=15):
@@ -571,14 +574,12 @@ collection_group {
   time_threshold = %(time_threshold)s
 %(metrics_string)s
 }
-""" % { 'module_name': module_name,
-        'params_string': params_string,
-        'collect_every': collect_every,
-        'time_threshold': time_threshold,
-        'metrics_string': metrics_string
-      }
-
-
+""" % {'module_name': module_name,
+       'params_string': params_string,
+       'collect_every': collect_every,
+       'time_threshold': time_threshold,
+       'metrics_string': metrics_string
+       }
 
 
 if __name__ == '__main__':
@@ -586,17 +587,22 @@ if __name__ == '__main__':
     # metric descriptor and printing it out.
 
     cmdline = optparse.OptionParser(usage="usage: %prog [options] statsfile")
-    cmdline.add_option('--generate-pyconf', '-g', dest='pyconf', metavar='FILE',
+    cmdline.add_option(
+        '--generate-pyconf', '-g', dest='pyconf', metavar='FILE',
         help='If set, a .pyconf file will be output with flattened metrics key from statsfile.')
-    cmdline.add_option('--tmax', '-t', action='store', default=15,
+    cmdline.add_option(
+        '--tmax', '-t', action='store', default=15,
         help='time_max for ganglia python module metrics.')
-    cmdline.add_option('--key-separator', '-k', dest='key_separator', default='.',
+    cmdline.add_option(
+        '--key-separator', '-k', dest='key_separator', default='.',
         help='Key separator for flattened json object key name. Default: \'.\'  \'/\' is not allowed.')
-    cmdline.add_option('--key-prefix', '-p', dest='key_prefix', default='',
+    cmdline.add_option(
+        '--key-prefix', '-p', dest='key_prefix', default='',
         help='Optional key prefix for flattened json object key name.')
     cmdline.add_option('--dry-run', action='store_true', default=False)
-    cmdline.add_option('--debug', '-D', action='store_true', default=False,
-                        help='Provide more verbose logging for debugging.')
+    cmdline.add_option(
+        '--debug', '-D', action='store_true', default=False,
+        help='Provide more verbose logging for debugging.')
 
     cli_options, arguments = cmdline.parse_args()
 
@@ -604,7 +610,7 @@ if __name__ == '__main__':
         cmdline.print_help()
         cmdline.error("Must supply statsfile argument.")
 
-    cli_options.stats_file  = arguments[0]
+    cli_options.stats_file = arguments[0]
 
     # Turn the optparse.Value object into a regular dict
     # so we can pass it to metric_init
@@ -653,7 +659,6 @@ if __name__ == '__main__':
 
         print '\nWrote "%s".' % cli_options.pyconf
         sys.exit(0)
-
 
     # Else print out values of metrics in a loop.
     else:

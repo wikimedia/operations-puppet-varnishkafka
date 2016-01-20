@@ -36,3 +36,7 @@ class { 'varnishkafka::monitoring': }
 ## Testing
 
 Run `tox` which setup appropriate virtualenvs and run commands for you.
+
+Python scripts should match the flake8 conventions, you can run them using:
+
+    tox -e flake8
