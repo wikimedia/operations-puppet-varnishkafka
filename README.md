@@ -32,3 +32,7 @@ See the ```varnishkafka``` class docs in manifests/init.pp for more parameter do
 # to Ganglia.
 class { 'varnishkafka::monitoring': }
 ```
+
+## Testing
+
+Run `tox` which setup appropriate virtualenvs and run commands for you.
