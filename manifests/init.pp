@@ -34,6 +34,9 @@ class varnishkafka {
     # varnishkafka::instance will take care of installing a logrotate file for
     # the per-instance stats.json file.
     file { '/etc/logrotate.d/varnishkafka':
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
         source => 'puppet:///modules/varnishkafka/varnishkafka_logrotate'
     }
 

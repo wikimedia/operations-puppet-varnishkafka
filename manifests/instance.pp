@@ -120,6 +120,9 @@ define varnishkafka::instance(
     }
 
     file { "/etc/logrotate.d/varnishkafka-${name}-stats":
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
         content => template('varnishkafka/varnishkafka-stats.logrotate.erb'),
         require => Package['varnishkafka'],
     }
