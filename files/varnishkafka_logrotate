@@ -1,7 +1,7 @@
 /var/log/varnishkafka.log {
   daily
   rotate 7
-  create 0664 syslog adm
+  create 0664 root adm
   missingok
   compress
   delaycompress
