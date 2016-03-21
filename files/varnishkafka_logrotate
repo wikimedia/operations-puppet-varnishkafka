@@ -6,6 +6,6 @@
   compress
   delaycompress
   postrotate
-    service rsyslog reload >/dev/null
+    invoke-rc.d rsyslog rotate >/dev/null
   endscript
 }
