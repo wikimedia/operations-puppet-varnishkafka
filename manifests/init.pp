@@ -28,6 +28,14 @@ class varnishkafka {
         require => Package['varnishkafka'],
     }
 
+    # Basic rsyslog.d configuration to create /var/log/varnishkafka.log
+    file { '/etc/rsyslog.d/70-varnishkafka.conf':
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
+        source => 'puppet:///modules/varnishkafka/varnishkafka_rsyslog.conf'
+    }
+
     # Since we are doing per instance stats.json files, the logrotate
     # config that comes with the varnishkafka instance is not sufficient.
     # This file will rotate only the daemon log file at /var/log/varnishkafka.log
