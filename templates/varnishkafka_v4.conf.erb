@@ -3,7 +3,7 @@
 #######################################################################
 #                                                                     #
 #                varnishkafka configuration file                      #
-#                       Varnish 3 specific                            #
+#                       Varnish 4 specific                            #
 #                                                                     #
 #######################################################################
 #                                                                     #
@@ -129,24 +129,6 @@ tag.size.max = <%= @tag_size_max %>
 # freed, so it is a little more costly than using thestatic scratch pad.
 # Defaults to 4096 bytes.
 logline.scratch.size = <%= @logline_scratch_size %>
-
-
-# Logline cache hash tuning
-# 'log.hash.size * log.hash.max' dictates the maximum number of cached logline
-# entries in memory.
-
-# Number of hash buckets (keyed by log id).
-# Higher number yields more performance at the expense of memory.
-# Set this to avg_requests_per_second / 5.
-# Defaults to 5000
-logline.hash.size = <%= @logline_hash_size %>
-
-# Maximum number of loglines per hash bucket
-# Higher number yields less memory consumption at the expense of performance.
-# Set this to avg_requests_per_second / log.hash.size.
-# Defaults to 5
-logline.hash.max = <%= @logline_hash_max %>
-
 
 # EXPERIMENTAL
 # log.data.copy indicates if the log tag data read from VSL files should be copied

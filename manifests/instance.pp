@@ -55,10 +55,10 @@
 #                                     slighly larger than your expected line size.
 #                                     Default: 4096
 # $logline_hash_size                - Number of hash buckets.  Set this to avg_requests_per_second / 5.
-#                                     Default: 5000
+#                                     Default: 5000 - Usable only with Varnish 3
 # $logline_hash_max                 - Max number of log lines / bucket.  Set this to
 #                                     avg_requests_per_second / $log_hash_size.
-#                                     Default: 5
+#                                     Default: 5 - Usable only with Varnish 3
 # $logline_data_copy                - If true, log tag data read from VSL files
 #                                     should be copied instantly when read.  Default true.
 # $log_level                        - varnishkafka log level.  Default 6 (info).
