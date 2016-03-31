@@ -29,11 +29,14 @@ class varnishkafka {
     }
 
     # Basic rsyslog.d configuration to create /var/log/varnishkafka.log
-    file { '/etc/rsyslog.d/70-varnishkafka.conf':
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0444',
-        source => 'puppet:///modules/varnishkafka/varnishkafka_rsyslog.conf'
+    if defined(Service['rsyslog']) {
+        file { '/etc/rsyslog.d/70-varnishkafka.conf':
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0444',
+            source => 'puppet:///modules/varnishkafka/varnishkafka_rsyslog.conf',
+            notify =>  Service['rsyslog']
+        }
     }
 
     # Since we are doing per instance stats.json files, the logrotate
