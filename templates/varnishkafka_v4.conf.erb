@@ -130,18 +130,6 @@ tag.size.max = <%= @tag_size_max %>
 # Defaults to 4096 bytes.
 logline.scratch.size = <%= @logline_scratch_size %>
 
-# EXPERIMENTAL
-# log.data.copy indicates if the log tag data read from VSL files should be copied
-# instantly when read (true). If this is set to false the data is assumed to be
-# persistent (for the duration of collecting and formatting a single request)
-# and no copies will be made, thus improving performance.
-#
-# NOTE:
-#   Must be set to true for offline files (-r file..) due to the way
-#   libvarnishapi reads its data.
-logline.data.copy = <%= @logline_data_copy %>
-
-
 #
 # varnishkafka log messages configuration
 # Debugging, error reporting, etc, not to be confused with varnish logs.
