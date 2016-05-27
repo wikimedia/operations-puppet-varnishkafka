@@ -158,16 +158,19 @@ class VarnishkafkaStats(object):
 
     per_second_key_suffix = 'per_second'
 
-    def __init__(self, stats_file='/var/cache/varnishkafka/varnishkafka.stats.json', key_separator='.'):
-        self.stats_file               = stats_file
-        self.key_separator            = key_separator
+    def __init__(
+            self,
+            stats_file='/var/cache/varnishkafka/varnishkafka.stats.json',
+            key_separator='.'):
+        self.stats_file = stats_file
+        self.key_separator = key_separator
 
         # NOTE:  It might be more elegant to
         # store the JSON object as it comes back from stats_file,
         # rather than keeping the state in the flattened hash.
 
         # latest flattnened stats as read from stats_file
-        self.flattened_stats          = {}
+        self.flattened_stats = {}
         # previous flattened stats as read from stats_file
         self.flattened_stats_previous = {}
 
@@ -273,14 +276,16 @@ class VarnishkafkaStats(object):
         '''
         # The timestamp will be keyed as 'kafka.rdkafka.time' or 'kafka.varnishkafka.time',
         # depending on whether this is a librdkafka or a varnishkafka related stat.
-        timestamp_key = self.key_separator.join(key.split(self.key_separator)[0:2]  + ['time'])
+        timestamp_key = self.key_separator.join(key.split(self.key_separator)[0:2] + ['time'])
 
         # if we don't yet have a previous value from which to calculate a
         # rate, just return 0 for now
-        if not self.flattened_stats or not self.flattened_stats_previous or timestamp_key not in self.flattened_stats_previous:
+        if (not self.flattened_stats or not self.flattened_stats_previous or
+                timestamp_key not in self.flattened_stats_previous):
             return 0.0
 
-        interval = self.flattened_stats[timestamp_key] - self.flattened_stats_previous[timestamp_key]
+        interval = self.flattened_stats[timestamp_key] - \
+            self.flattened_stats_previous[timestamp_key]
         # if the timestamps are the same, then just return 0.
         if interval == 0:
             return 0.0
@@ -341,7 +346,8 @@ def metric_handler(name):
         varnishkafka_stats.update_stats()
         last_run_timestamp = time.time()
 
-    logger.debug('metric_handler called for {0}, value: {1}'.format(name, varnishkafka_stats.flattened_stats[name]))
+    logger.debug('metric_handler called for {0}, value: {1}'.format(
+        name, varnishkafka_stats.flattened_stats[name]))
     return varnishkafka_stats.flattened_stats[name]
 
 
@@ -352,13 +358,13 @@ def metric_init(params):
     global last_run_timestamp
     global key_prefix
 
-    stats_file     = params.get('stats_file', '/var/cache/varnishkafka/varnishkafka.stats.json')
-    key_separator  = params.get('key_separator', '.')
-    time_max       = int(params.get('tmax', time_max))
-    key_prefix     = params.get('key_prefix', '')
+    stats_file = params.get('stats_file', '/var/cache/varnishkafka/varnishkafka.stats.json')
+    key_separator = params.get('key_separator', '.')
+    time_max = int(params.get('tmax', time_max))
+    key_prefix = params.get('key_prefix', '')
     if key_prefix and not key_prefix.endswith(key_separator):
         key_prefix += key_separator
-    default_group  = '_'.join(('varnishkafka', key_prefix)).strip(key_separator + '_')
+    default_group = '_'.join(('varnishkafka', key_prefix)).strip(key_separator + '_')
     ganglia_groups = params.get('groups', default_group)
 
     varnishkafka_stats = VarnishkafkaStats(stats_file, key_separator)
@@ -436,9 +442,11 @@ import unittest  # noqa
 
 
 class TestVarnishkafkaGanglia(unittest.TestCase):
+
     def setUp(self):
         self.key_separator = '&'
-        self.varnishkafka_stats = VarnishkafkaStats('/tmp/test-varnishkafka.stats.json', self.key_separator)
+        self.varnishkafka_stats = VarnishkafkaStats(
+            '/tmp/test-varnishkafka.stats.json', self.key_separator)
 
         self.json_data = {
             '1.1': {
@@ -489,26 +497,33 @@ class TestVarnishkafkaGanglia(unittest.TestCase):
         self.assertEquals(flattened, self.flattened_should_be)
 
     def test_is_counter_stat(self):
-        self.assertTrue(self.varnishkafka_stats.is_counter_stat(self.varnishkafka_stats.counter_stats[0]))
-        self.assertTrue(self.varnishkafka_stats.is_counter_stat('whatever&it&no&matter&' + self.varnishkafka_stats.counter_stats[0]))
+        self.assertTrue(self.varnishkafka_stats.is_counter_stat(
+            self.varnishkafka_stats.counter_stats[0]))
+        self.assertTrue(self.varnishkafka_stats.is_counter_stat(
+            'whatever&it&no&matter&' + self.varnishkafka_stats.counter_stats[0]))
         self.assertFalse(self.varnishkafka_stats.is_counter_stat('notone'))
 
     def test_update_stats(self):
         self.varnishkafka_stats.update_stats(self.flattened_should_be)
-        self.assertEquals(self.varnishkafka_stats.flattened_stats['1.1&valuetwo'], self.flattened_should_be['1.1&valuetwo'])
+        self.assertEquals(self.varnishkafka_stats.flattened_stats[
+                          '1.1&valuetwo'], self.flattened_should_be['1.1&valuetwo'])
 
         previous_value = self.varnishkafka_stats.flattened_stats['1.1&valuetwo']
         self.flattened_should_be['1.1&valuetwo'] = 1
         self.varnishkafka_stats.update_stats(self.flattened_should_be)
-        self.assertEquals(self.varnishkafka_stats.flattened_stats['1.1&valuetwo'], self.flattened_should_be['1.1&valuetwo'])
-        self.assertEquals(self.varnishkafka_stats.flattened_stats_previous['1.1&valuetwo'], previous_value)
+        self.assertEquals(self.varnishkafka_stats.flattened_stats[
+                          '1.1&valuetwo'], self.flattened_should_be['1.1&valuetwo'])
+        self.assertEquals(self.varnishkafka_stats.flattened_stats_previous[
+                          '1.1&valuetwo'], previous_value)
 
     def test_rate_of_change_update_stats(self):
-        counter_key = 'kafka{0}varnishkafka{0}counter{0}{1}'.format(self.key_separator, self.varnishkafka_stats.counter_stats[0])
+        counter_key = 'kafka{0}varnishkafka{0}counter{0}{1}'.format(
+            self.key_separator, self.varnishkafka_stats.counter_stats[0])
         self.varnishkafka_stats.update_stats(self.flattened_should_be)
         previous_value = self.flattened_should_be[counter_key]
 
-        # increment the counter and the timestamp to make VarnishkafkaStats calculate a new per_second rate
+        # increment the counter and the timestamp to make VarnishkafkaStats
+        # calculate a new per_second rate
         self.flattened_should_be[counter_key] += 101
         self.flattened_should_be['kafka&varnishkafka&time'] += 100.0
         self.varnishkafka_stats.update_stats(self.flattened_should_be)
@@ -525,13 +540,17 @@ class TestVarnishkafkaGanglia(unittest.TestCase):
             self.varnishkafka_stats.flattened_stats['kafka&varnishkafka&time'],
             self.flattened_should_be['kafka&varnishkafka&time']
         )
-        per_second_key = self.key_separator.join([counter_key, self.varnishkafka_stats.per_second_key_suffix])
+        per_second_key = self.key_separator.join(
+            [counter_key, self.varnishkafka_stats.per_second_key_suffix])
 
-        rate_should_be = (self.flattened_should_be[counter_key] - self.varnishkafka_stats.flattened_stats_previous[counter_key]) / 100.0
+        rate_should_be = (
+            self.flattened_should_be[counter_key] -
+            self.varnishkafka_stats.flattened_stats_previous[counter_key]) / 100.0
         self.assertEquals(self.varnishkafka_stats.flattened_stats[per_second_key], rate_should_be)
 
 
-def generate_pyconf(module_name, metric_descriptions, params={}, collect_every=15, time_threshold=15):
+def generate_pyconf(
+        module_name, metric_descriptions, params={}, collect_every=15, time_threshold=15):
     '''
     Generates a pyconf file including all of the metrics in metric_descriptions.
     '''
@@ -595,7 +614,9 @@ if __name__ == '__main__':
         help='time_max for ganglia python module metrics.')
     cmdline.add_option(
         '--key-separator', '-k', dest='key_separator', default='.',
-        help='Key separator for flattened json object key name. Default: \'.\'  \'/\' is not allowed.')
+        help=(
+            'Key separator for flattened json object key name. '
+            "Default: '.'  '/' is not allowed."))
     cmdline.add_option(
         '--key-prefix', '-p', dest='key_prefix', default='',
         help='Optional key prefix for flattened json object key name.')
