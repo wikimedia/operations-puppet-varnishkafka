@@ -217,9 +217,9 @@ daemonize = false
 #                                                                     #
 #######################################################################
 
-<% @varnish_opts.each_pair do |option, value| -%>
-# -<%= option %> <%= value %>
-varnish.arg.<%= option %> = <%= value %>
+<% @varnish_opts.keys.sort.each do |key| -%>
+# -<%= key %> <%= @varnish_opts[key] %>
+varnish.arg.<%= key %> = <%= @varnish_opts[key] %>
 <% end -%>
 
 <% if @varnish_name -%>
