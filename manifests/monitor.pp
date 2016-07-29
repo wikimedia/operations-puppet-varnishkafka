@@ -16,6 +16,10 @@ define varnishkafka::monitor(
 
     if ! defined(File[$varnishkafka_py]) {
         file { $varnishkafka_py:
+            ensure  => present,
+            owner   => 'root',
+            group   => 'root',
+            mode    => '0444',
             source  => 'puppet:///modules/varnishkafka/varnishkafka_ganglia.py',
             require => Package['ganglia-monitor'],
             notify  => Service['ganglia-monitor'],
