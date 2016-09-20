@@ -4,7 +4,7 @@ Puppet module for [varnishkafka](https://github.com/wikimedia/varnishkafka).
 
 # Usage:
 
-## Run varnishkafka
+## Install/configure/run varnishkafka
 
 ```puppet
 # Default varnishkafka instance with a two broker Kafka Cluster
