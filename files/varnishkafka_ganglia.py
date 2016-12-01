@@ -458,7 +458,6 @@ class TestVarnishkafkaGanglia(unittest.TestCase):
                 }
             },
             '2.1': ['a', 'b'],
-            '2.1': ['a', 'b'],
             # '/' should be replaced with key_separator
             '3/1': 'nonya',
             'notme': 'nope',
