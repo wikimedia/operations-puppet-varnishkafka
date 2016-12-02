@@ -3,7 +3,7 @@
 # Configures Logster to parse Varnishkafka stats JSON files, extract metrics
 # and push them to statsd.
 #
-define varnishkafka::monitor(
+define varnishkafka::monitor::statsd(
     $log_statistics_file     = "/var/cache/varnishkafka/${name}.stats.json",
     $graphite_metric_prefix  = "varnishkafka.stats",
     $statsd_host_port        = "localhost:8125",

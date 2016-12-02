@@ -2,7 +2,7 @@
 #
 # Installs varnishkafka python ganglia module.
 #
-define varnishkafka::monitor(
+define varnishkafka::monitor::ganglia(
     $log_statistics_file     = "/var/cache/varnishkafka/${name}.stats.json",
     $pyconf_file             = "/etc/ganglia/conf.d/varnishkafka-${name}.pyconf",
     $log_statistics_interval = 60,
