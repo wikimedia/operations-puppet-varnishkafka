@@ -14,7 +14,7 @@ define varnishkafka::monitor::statsd(
 
     # Send varnishkafka stats to statsd -> graphite using Logster.
     # Logster runs every minute using a cronjob.
-    logster::job { 'varnishkafka-${name}':
+    logster::job { "varnishkafka-${name}":
         minute          => '*/1',
         parser          => 'JsonLogster',
         logfile         => $log_statistics_file,
