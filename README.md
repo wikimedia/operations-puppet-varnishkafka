@@ -24,13 +24,14 @@ class { 'varnishkafka':
 
 See the ```varnishkafka``` class docs in manifests/init.pp for more parameter documentation.
 
-## Ganglia Monitoring
+## Monitoring
 
 ```puppet
-# This will install logster and a custom VarnishkafkaLogster
-# logster parser to send JSON stats from the log.statistics.file
-# to Ganglia.
-class { 'varnishkafka::monitoring': }
+# The following classes will install logster and a custom VarnishkafkaLogster
+# parser to send JSON stats from the log.statistics.file
+# to Ganglia or Statsd.
+class { 'varnishkafka::monitoring::ganglia': }
+class { 'varnishkafka::monitoring::statsd': }
 ```
 
 ## Testing

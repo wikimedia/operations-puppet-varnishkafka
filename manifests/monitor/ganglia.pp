@@ -1,4 +1,5 @@
-# == Define varnishkafka::monitor
+# == Define varnishkafka::monitor::ganglia
+#
 # Installs varnishkafka python ganglia module.
 #
 define varnishkafka::monitor(
