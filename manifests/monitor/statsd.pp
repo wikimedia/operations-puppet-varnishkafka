@@ -10,7 +10,7 @@ define varnishkafka::monitor::statsd(
 ) {
     require ::varnishkafka
 
-    Varnishkafka::Instance[$name] -> Varnishkafka::Monitor[$name]
+    Varnishkafka::Instance[$name] -> Varnishkafka::Monitor::Statsd[$name]
 
     # Send varnishkafka stats to statsd -> graphite using Logster.
     # Logster runs every minute using a cronjob.

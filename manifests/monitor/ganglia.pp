@@ -10,7 +10,7 @@ define varnishkafka::monitor::ganglia(
 ) {
     require ::varnishkafka
 
-    Varnishkafka::Instance[$name] -> Varnishkafka::Monitor[$name]
+    Varnishkafka::Instance[$name] -> Varnishkafka::Monitor::Ganglia[$name]
 
     $varnishkafka_py = '/usr/lib/ganglia/python_modules/varnishkafka.py'
     $generate_pyconf_command = "/usr/bin/python ${varnishkafka_py} --generate-pyconf ${pyconf_file} --key-prefix=${key_prefix} --tmax=${log_statistics_interval} ${log_statistics_file}"
