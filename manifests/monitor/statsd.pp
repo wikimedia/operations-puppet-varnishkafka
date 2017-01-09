@@ -5,8 +5,8 @@
 #
 define varnishkafka::monitor::statsd(
     $log_statistics_file     = "/var/cache/varnishkafka/${name}.stats.json",
-    $graphite_metric_prefix  = "varnishkafka.stats",
-    $statsd_host_port        = "localhost:8125",
+    $graphite_metric_prefix  = 'varnishkafka.stats',
+    $statsd_host_port        = 'localhost:8125',
 ) {
     require ::varnishkafka
 
