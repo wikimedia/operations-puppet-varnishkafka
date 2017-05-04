@@ -23,7 +23,7 @@ class varnishkafka {
     file { '/var/cache/varnishkafka':
         ensure  => directory,
         owner   => 'varnishlog',
-        group   => 'varnishlog',
+        group   => 'varnish',
         mode    => '0755',
         require => Package['varnishkafka'],
     }
