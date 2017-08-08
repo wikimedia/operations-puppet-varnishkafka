@@ -72,6 +72,10 @@
 #                                     changes.  Default: true.
 # $conf_template
 #
+# $force_protocol_version           - The Kafka protocol version used to produce events.
+#                                     Suggested workaround for https://issues.apache.org/jira/browse/KAFKA-3547
+#                                     (Kafka 0.9.0.[0,1] protocol versions affected)
+#
 define varnishkafka::instance(
     $brokers                        = ['localhost:9092'],
     $topic                          = 'varnish',
@@ -111,6 +115,7 @@ define varnishkafka::instance(
 
     $should_subscribe               = true,
     $conf_template                  = 'varnishkafka/varnishkafka.conf.erb',
+    $force_protocol_version         = undef,
 ) {
     require ::varnishkafka
 
