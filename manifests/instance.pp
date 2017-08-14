@@ -133,11 +133,10 @@ define varnishkafka::instance(
     }
 
     base::service_unit { "varnishkafka-${name}":
-        systemd        => true,
-        upstart        => true,
+        systemd        => systemd_template('varnishkafka'),
+        upstart        => upstart_template('varnishkafka'),
         refresh        => $should_subscribe,
         require        => Package['varnishkafka'],
-        template_name  => 'varnishkafka',
         service_params => {
             enable     => true,
             hasstatus  => true,
