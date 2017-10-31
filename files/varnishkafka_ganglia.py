@@ -642,7 +642,7 @@ if __name__ == '__main__':
         try:
             with open(cli_options.pyconf, 'r') as f:
                 cur_pyconf = f.readlines()
-        except:
+        except Exception:
             cur_pyconf = []
 
         new_pyconf = generate_pyconf(
