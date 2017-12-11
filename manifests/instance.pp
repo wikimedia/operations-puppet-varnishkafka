@@ -76,6 +76,23 @@
 #                                     Suggested workaround for https://issues.apache.org/jira/browse/KAFKA-3547
 #                                     (Kafka 0.9.0.[0,1] protocol versions affected)
 #
+# $ssl_enabled                      - enable the TLS/SSL section of the v4 configuration file.
+#                                     Default: false
+#
+# $ssl_ca_location                  - CA certificate's path or simply the certificate
+#                                     of the entity that signed and that is able to verify
+#                                     the client's key.
+#                                     Default: undef
+#
+# $ssl_key_password                 - Password of the SSL client key.
+#                                     Default: undef
+#
+# $ssl_key_location                 - Full path of the SSL client Key.
+#                                     Default: undef
+#
+# $ssl_certificate_location         - Full path of the SSL client certificate.
+#                                     Default: undef
+#
 define varnishkafka::instance(
     $brokers                        = ['localhost:9092'],
     $topic                          = 'varnish',
@@ -116,6 +133,12 @@ define varnishkafka::instance(
     $should_subscribe               = true,
     $conf_template                  = 'varnishkafka/varnishkafka.conf.erb',
     $force_protocol_version         = undef,
+
+    $ssl_enabled                    = false,
+    $ssl_ca_location                = undef,
+    $ssl_key_password               = undef,
+    $ssl_key_location               = undef,
+    $ssl_certificate_location       = undef,
 ) {
     require ::varnishkafka
 
