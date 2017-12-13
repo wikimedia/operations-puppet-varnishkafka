@@ -142,8 +142,19 @@ define varnishkafka::instance(
 ) {
     require ::varnishkafka
 
+    # A more restrictive set of reading permissions
+    # is deployed if SSL is configured, since the key's password
+    # will be stored in the instance config.
+    $instance_conf_mode = $ssl_enabled ? {
+        true    => '0400',
+        default => '0444',
+    }
+
     file { "/etc/varnishkafka/${name}.conf":
         content => template($conf_template),
+        owner   => 'root',
+        group   => 'root',
+        mode    => $instance_conf_mode,
         require => Package['varnishkafka'],
     }
 
