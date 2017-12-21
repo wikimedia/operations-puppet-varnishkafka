@@ -93,6 +93,10 @@
 # $ssl_certificate_location         - Full path of the SSL client certificate.
 #                                     Default: undef
 #
+# $ssl_cipher_suites                - Comma separated string of cipher suites that are permitted to
+#                                     be used for SSL communication with brokers.  This must match
+#                                     at least one of the cipher suites allowed by the brokers.
+#
 define varnishkafka::instance(
     $brokers                        = ['localhost:9092'],
     $topic                          = 'varnish',
@@ -139,6 +143,7 @@ define varnishkafka::instance(
     $ssl_key_password               = undef,
     $ssl_key_location               = undef,
     $ssl_certificate_location       = undef,
+    $ssl_cipher_suites              = undef,
 ) {
     require ::varnishkafka
 
